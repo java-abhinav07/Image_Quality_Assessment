@@ -55,7 +55,8 @@ def compare(img1, img2, C1=6.5025, C2=58.5225):
     
 
 def ssim_sk(reference_img, test_img):
-    return ssim(reference_img, test_img)
+    return ssim(reference_img, test_img),
+           mean_squared_error(reference_img, test_img)
     
 
 

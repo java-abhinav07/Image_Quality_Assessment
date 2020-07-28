@@ -11,7 +11,7 @@ def psnr(img1, img2):
     max_brightness = 255.0
     psnr = 10 * log((max_brightness**2) / mse)
 
-    return psnr
+    return psnr, mse
 
 
     
