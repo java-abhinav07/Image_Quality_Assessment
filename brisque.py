@@ -5,6 +5,7 @@ from PIL import Image
 def brisque_imquality(img):
     return brisque.score(img)
 
+
 #######################################################
 
 # the following code is highly inspired by https://github.com/ocampor/notebooks/blob/master/notebooks/image/quality/brisque.ipynb
@@ -12,7 +13,7 @@ def brisque_imquality(img):
 # import collections
 # from itertools import chain
 # import urllib.request as request
-# import pickle 
+# import pickle
 
 # import numpy as np
 
@@ -28,4 +29,3 @@ def brisque_imquality(img):
 # import cv2
 
 # from libsvm import svmutil
-
