@@ -24,11 +24,13 @@ from ssim import ssim_sk
 from psnr import psnr
 from brisque import brisque_imquality
 from Information_Entropy import entropy_sk
+# from msssim import compute_msssim
+from vif import *
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--root", type=str, default="", help="path to root directory"
+    "--root", type=str, default="", help="path to root directory", required=True
 )  # contains subdirectories with GT+Test images for different datasets
 args = parser.parse_args()
 
@@ -52,6 +54,9 @@ for dir in os.listdir(args.root):
             "SSEQ": 0,
             "VIF": 0,
             "MSE": 0,
+            "VIF_P": 0,
+            "UQI": 0,
+            "RASE": 0,
         }
         images_list = os.listdir(os.path.join(args.root, dir, dataset, "Results"))
         num_images = len(images_list)
@@ -64,12 +69,12 @@ for dir in os.listdir(args.root):
                 enhanced.split("_")[0] + "." + enhanced.split(".")[-1],
             )
             if os.path.isfile(gt_path):
-                gt_image = Image.open(gt_path).convert('RGB')
+                gt_image = Image.open(gt_path).convert("RGB")
             else:
                 gt_image = None
 
             enhanced = os.path.join(args.root, dir, dataset, "Results", enhanced)
-            enhanced_image = Image.open(enhanced).convert('RGB')
+            enhanced_image = Image.open(enhanced).convert("RGB")
 
             enhanced_image = np.asanyarray(enhanced_image)
 
@@ -79,7 +84,7 @@ for dir in os.listdir(args.root):
 
             gt_image = np.asanyarray(gt_image)
             gx = np.asanyarray(gx)
-            
+
             # ssim needs same sized images
             ssim, mse = ssim_sk(gt_image, enhanced_image)
 
@@ -89,23 +94,35 @@ for dir in os.listdir(args.root):
             metrics["MSE"] += mse
             metrics["IE"] += entropy_sk(gt_image, enhanced_image)
 
-            oc.addpath("./Bliinds2_code")
-            bliinds_features = oc.bliinds2_feature_extraction(enhanced_image)
-            metrics["BLINDS"] += oc.bliinds_prediction(bliinds_features)
+            # oc.addpath("./Bliinds2_code")
+            # bliinds_features = oc.bliinds2_feature_extraction(enhanced_image)
+            # metrics["BLINDS"] += oc.bliinds_prediction(bliinds_features)
 
-            oc.addpath("./Multi_Scale_SSIM")
-            metrics["MS-SSIM"] += oc.ssim_index_new(enhanced_image, gx)[0]
-            print(metrics["MS-SSIM"])
+            # oc.addpath("./Multi_Scale_SSIM")
+            # metrics["MS-SSIM"] += oc.msssim(enhanced_image, gx)
 
-            oc.addpath("./Visual_Image_Fidelity")
-            metrics["VIF"] += oc.vifvec(gt_image, enhanced_image)
+            # Uncomment
+            # metrics["MS-SSIM"] += compute_msssim(
+            #     np.array([gt_image]), np.array([enhanced_image]), max_val=255
+            # )
+            # print(metrics["MS-SSIM"])
 
+            # oc.addpath("./Visual_Image_Fidelity")
+            # metrics["VIF"] += oc.vifvec(gt_image, enhanced_image)
+
+            metrics["VIF_P"] += compute_vif(gt_image, enhanced_image)
+            # metrics["RASE"] += compute_rase(gt_image, enhanced_image)
+            metrics["UQI"] += compute_uqi(gt_image, enhanced_image)
+
+            oc.addpath("./FSIM")
             metrics["FSIM"] += oc.FeatureSIM(gt_image, enhanced_image)
+            # print(metrics["FSIM"])
 
             oc.addpath("./Visible_Edges_Ratio")
-            e1, ns1 = oc.visible_edge_ratio(gt_path, enhanced)
+            e1, ns1 = oc.EvaluationDescriptorCalculation(gt_path, enhanced)
             metrics["ns1"] += ns1
             metrics["e1"] += e1
+            print(e1, ns1)
 
             oc.addpath("./niqe_release")
             metrics["NIQE"] += oc.computequality(enhanced_image, 96, 96, 0, 0)

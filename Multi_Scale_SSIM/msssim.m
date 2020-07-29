@@ -1,5 +1,7 @@
 function overall_mssim = msssim(img1, img2, K, win, level, weight, method)
 
+pkg load image statistics optim signal;
+
 % Multi-scale Structural Similarity Index (MS-SSIM)
 % Z. Wang, E. P. Simoncelli and A. C. Bovik, "Multi-scale structural similarity
 % for image quality assessment," Invited Paper, IEEE Asilomar Conference on
@@ -82,8 +84,12 @@ if (method ~= 'wtd_sum' & method ~= 'product')
 end
 
 downsample_filter = ones(2)./4;
+img1 = rgb2gray(img1);
+img2 = rgb2gray(img2);
 im1 = double(img1);
 im2 = double(img2);
+
+
 for l = 1:level
    [mssim_array(l) ssim_map_array{l} mcs_array(l) cs_map_array{l}] = ssim_index_new(im1, im2, K, win);
 %   [M N] = size(im1);
@@ -101,3 +107,5 @@ else
    weight = weight./sum(weight);
    overall_mssim = sum(mcs_array(1:level-1).*weight(1:level-1)) + mssim_array(level).*weight(level);
 end
+
+exit;

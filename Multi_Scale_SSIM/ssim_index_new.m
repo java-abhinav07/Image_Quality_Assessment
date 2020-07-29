@@ -69,13 +69,19 @@ end
 
 C1 = (K(1)*255)^2;
 C2 = (K(2)*255)^2;
-win = win/sum(sum(win));
 
+win = win/sum(sum(win));
 mu1   = filter2(win, img1, 'valid');
 mu2   = filter2(win, img2, 'valid');
+
 mu1_sq = mu1.*mu1;
 mu2_sq = mu2.*mu2;
+
+disp(size(mu1));
+disp(size(mu2));
+
 mu1_mu2 = mu1.*mu2;
+
 sigma1_sq = filter2(win, img1.*img1, 'valid') - mu1_sq;
 sigma2_sq = filter2(win, img2.*img2, 'valid') - mu2_sq;
 sigma12 = filter2(win, img1.*img2, 'valid') - mu1_mu2;

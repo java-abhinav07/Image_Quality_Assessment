@@ -1,4 +1,6 @@
 function [FSIM, FSIMc] = FeatureSIM(imageRef, imageDis)
+pkg load image statistics optim signal;
+
 % ========================================================================
 % FSIM Index with automatic downsampling, Version 1.0
 % Copyright(c) 2010 Lin ZHANG, Lei Zhang, Xuanqin Mou and David Zhang
