@@ -107,5 +107,3 @@ else
    weight = weight./sum(weight);
    overall_mssim = sum(mcs_array(1:level-1).*weight(1:level-1)) + mssim_array(level).*weight(level);
 end
-
-exit;

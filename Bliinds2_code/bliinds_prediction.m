@@ -20,4 +20,3 @@ dm=iVect(IXX);
 clear p_temp* IXX
 
 predicted_score=dm;     
-exit;

@@ -1,6 +1,7 @@
 function  quality = computequality(im,blocksizerow,blocksizecol,...
     blockrowoverlap,blockcoloverlap)
-   
+pkg load image statistics optim signal;
+
 % Input
 % im              - Image whose quality needs to be computed
 % blocksizerow    - Height of the blocks in to which image is divided
@@ -90,4 +91,3 @@ invcov_param     = pinv((cov_prisparam+cov_distparam)/2);
 quality = sqrt((mu_prisparam-mu_distparam)* ...
     invcov_param*(mu_prisparam-mu_distparam)');
     
-exit;

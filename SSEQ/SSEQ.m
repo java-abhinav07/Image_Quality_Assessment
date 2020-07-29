@@ -4,4 +4,3 @@ function score = SSEQ( imdist )
     score=SSQA_by_f(feature);
     
 end
-exit;

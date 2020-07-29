@@ -118,11 +118,11 @@ for dir in os.listdir(args.root):
             metrics["FSIM"] += oc.FeatureSIM(gt_image, enhanced_image)
             # print(metrics["FSIM"])
 
-            oc.addpath("./Visible_Edges_Ratio")
-            e1, ns1 = oc.EvaluationDescriptorCalculation(gt_path, enhanced)
-            metrics["ns1"] += ns1
-            metrics["e1"] += e1
-            print(e1, ns1)
+            # oc.addpath("./Visible_Edges_Ratio")
+            # e1, ns1 = oc.EvaluationDescriptorCalculation(gt_path, enhanced)
+            # metrics["ns1"] += ns1
+            # metrics["e1"] += e1
+            # print(e1, ns1)
 
             oc.addpath("./niqe_release")
             metrics["NIQE"] += oc.computequality(enhanced_image, 96, 96, 0, 0)

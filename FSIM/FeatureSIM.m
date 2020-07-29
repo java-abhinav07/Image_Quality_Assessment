@@ -447,5 +447,3 @@ function f = lowpassfilter(sze, cutoff, n)
     radius = sqrt(x.^2 + y.^2);        % A matrix with every pixel = radius relative to centre.
     f = ifftshift( 1 ./ (1.0 + (radius ./ cutoff).^(2*n)) );   % The filter
     return;
-
-exit;

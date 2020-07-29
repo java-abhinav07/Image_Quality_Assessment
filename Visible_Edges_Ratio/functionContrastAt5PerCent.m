@@ -181,4 +181,3 @@ Mask=Mask(S+1:nl+S,S+1:nc+S);
 Crr=Crr(S+1:nl+S,S+1:nc+S);
 
 %close(h);
-exit;

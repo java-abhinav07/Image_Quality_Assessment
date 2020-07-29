@@ -149,4 +149,3 @@ r1=exp((1/(whitePixels1))*nansum(XX(isfinite(XX))));
 
 %axes('position',[0,0,1,1],'visible','off');
 %text(0.3,0.1,['e=',num2str(e1),'    {\sigma}=',num2str(ns1*100),'%','    r=', num2str(r1),' ' ])
-exit;
