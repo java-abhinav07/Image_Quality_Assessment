@@ -24,7 +24,7 @@ from ssim import ssim_sk
 from psnr import psnr
 from brisque import brisque_imquality
 from Information_Entropy import entropy_sk
-# from msssim import compute_msssim
+from msssim import compute_msssim
 from vif import *
 
 
@@ -38,8 +38,8 @@ for dir in os.listdir(args.root):
     print(dir)
     print("-------------------")
     print("-------------------")
-    for dataset in os.listdir(os.path.join(args.root, dir)):
-        print(dir, " -----> ", dataset)
+    for _, dataset in enumerate(os.listdir(os.path.join(args.root, dir))):
+        print(_, ". ", dataset)
 
         metrics = {
             "PSNR": 0,
@@ -55,7 +55,6 @@ for dir in os.listdir(args.root):
             "SSEQ": 0,
             "VIF": 0,
             "MSE": 0,
-            "VIF_P": 0,
             "UQI": 0,
             "RASE": 0,
         }
@@ -95,22 +94,22 @@ for dir in os.listdir(args.root):
             metrics["MSE"] += mse
             metrics["IE"] += entropy_sk(gt_image, enhanced_image)
 
-            # oc.addpath("./Bliinds2_code")
-            # bliinds_features = oc.bliinds2_feature_extraction(enhanced_image)
-            # metrics["BLINDS"] += oc.bliinds_prediction(bliinds_features)
+            oc.addpath("./Bliinds2_code")
+            bliinds_features = oc.bliinds2_feature_extraction(enhanced_image)
+            metrics["BLINDS"] += oc.bliinds_prediction(bliinds_features)
 
             # oc.addpath("./Multi_Scale_SSIM")
             # metrics["MS-SSIM"] += oc.msssim(enhanced_image, gx)
 
-            # metrics["MS-SSIM"] += compute_msssim(
-            #     np.array([gt_image]), np.array([enhanced_image]), max_val=255
-            # )
-            # # print(metrics["MS-SSIM"])
+            metrics["MS-SSIM"] += compute_msssim(
+                np.array([gt_image]), np.array([enhanced_image]), max_val=255
+            )
+            # print(metrics["MS-SSIM"])
 
             # oc.addpath("./Visual_Image_Fidelity")
             # metrics["VIF"] += oc.vifvec(gt_image, enhanced_image)
 
-            metrics["VIF_P"] += compute_vif(gt_image, enhanced_image)
+            metrics["VIF"] += compute_vif(gt_image, enhanced_image)
             # metrics["RASE"] += compute_rase(gt_image, enhanced_image)
             metrics["UQI"] += compute_uqi(gt_image, enhanced_image)
 
@@ -118,10 +117,10 @@ for dir in os.listdir(args.root):
             metrics["FSIM"] += oc.FeatureSIM(gt_image, enhanced_image)
             # print(metrics["FSIM"])
 
-            # oc.addpath("./Visible_Edges_Ratio")
-            # e1, ns1 = oc.EvaluationDescriptorCalculation(gt_path, enhanced)
-            # metrics["ns1"] += ns1
-            # metrics["e1"] += e1
+            oc.addpath("./Visible_Edges_Ratio")
+            e1, ns1 = oc.EvaluationDescriptorCalculation(gt_path, enhanced)
+            metrics["ns1"] += ns1
+            metrics["e1"] += e1
             # print(e1, ns1)
 
             oc.addpath("./niqe_release")
@@ -137,8 +136,7 @@ for dir in os.listdir(args.root):
         with open("{}_metrics".format(dir), "a") as f:
             f.write(dataset)
             f.write(json.dumps(metrics))
-            f.write()
+            f.write("\n")
 
         print("finished writing {} to file.".format(dir))
         print("-----------------")
-        
