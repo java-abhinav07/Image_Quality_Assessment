@@ -6,7 +6,7 @@ function pred = svmPredict(model, X)
 %   example is a row. model is a svm model returned from svmTrain.
 %   predictions pred is a m x 1 column of predictions of {0, 1} values.
 %
-
+% code by: https://github.com/schneems/Octave/blob/master/mlclass-ex6/mlclass-ex6/svmPredict.m
 % Check if we are getting a column vector, if so, then assume that we only
 % need to do prediction for a single example
 if (size(X, 2) == 1)
