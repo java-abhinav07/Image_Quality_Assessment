@@ -5,7 +5,7 @@ function f = feature_extract( imdist ,scale)
     for i=1:scale
         im=imdist;
         fun0=@(x)secal(x);
-        emat=blkproc(im,[8 8] ,fun0); 
+        emat=blockproc(im,[8 8] ,fun0); 
 
         sort_t = sort(emat(:),'ascend');
         len = length(sort_t);
@@ -18,7 +18,7 @@ function f = feature_extract( imdist ,scale)
         im=imdist;
         fun1=@(x)fecal(x);
         im=double(im);
-        femat=blkproc(im,[8 8],fun1);
+        femat=blockproc(im,[8 8],fun1);
 
         sort_t = sort(femat(:),'ascend');
         len = length(sort_t);

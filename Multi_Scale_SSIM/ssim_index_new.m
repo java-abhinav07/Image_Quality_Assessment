@@ -1,5 +1,7 @@
 function [mssim, ssim_map, mcs, cs_map] = ssim_index_new(img1, img2, K, win)
 
+pkg load image statistics optim signal;
+
 if (nargin < 2 || nargin > 4)
    mssim = -Inf;
    ssim_map = -Inf;

@@ -55,52 +55,63 @@ for dir in os.listdir(args.root):
         }
         images_list = os.listdir(os.path.join(args.root, dir, dataset, "Results"))
         num_images = len(images_list)
-        for dehazed in images_list:
+        for enhanced in images_list:
             gt_path = os.path.join(
                 args.root,
                 dir,
                 dataset,
                 "GT",
-                dehazed.split("_")[0] + dehazed.split(".")[-1],
+                enhanced.split("_")[0] + "." + enhanced.split(".")[-1],
             )
-            if gt_path.isdir():
-                gt_image = Image.open(gt_path)
+            if os.path.isfile(gt_path):
+                gt_image = Image.open(gt_path).convert('RGB')
             else:
                 gt_image = None
 
-            dehazed = os.path.join(args.root, dir, dataset, "Results", dehazed)
-            dehazed_image = Image.open(dehazed)
+            enhanced = os.path.join(args.root, dir, dataset, "Results", enhanced)
+            enhanced_image = Image.open(enhanced).convert('RGB')
 
-            ssim, mse = ssim_sk(gt_path, dehazed_image)
+            enhanced_image = np.asanyarray(enhanced_image)
+
+            w, h, c = enhanced_image.shape
+            gx = gt_image
+            gt_image = gt_image.resize((h, w), Image.ANTIALIAS)
+
+            gt_image = np.asanyarray(gt_image)
+            gx = np.asanyarray(gx)
+            
+            # ssim needs same sized images
+            ssim, mse = ssim_sk(gt_image, enhanced_image)
 
             metrics["SSIM"] += ssim
-            metrics["PSNR"] += psnr(gt_image, dehazed_image)[0]
-            metrics["BRISQUE"] += brisque_imquality(dehazed_image)
+            metrics["PSNR"] += psnr(gt_image, enhanced_image)[0]
+            metrics["BRISQUE"] += brisque_imquality(enhanced_image)
             metrics["MSE"] += mse
-            metrics["IE"] += entropy_sk(dehazed_image)
+            metrics["IE"] += entropy_sk(gt_image, enhanced_image)
 
             oc.addpath("./Bliinds2_code")
-            bliinds_features = oc.bliinds2_feature_extraction(dehazed_image)
+            bliinds_features = oc.bliinds2_feature_extraction(enhanced_image)
             metrics["BLINDS"] += oc.bliinds_prediction(bliinds_features)
 
             oc.addpath("./Multi_Scale_SSIM")
-            metrics["MS-SSIM"] += oc.ssim_index_new(dehazed_image, gt_image)[0]
+            metrics["MS-SSIM"] += oc.ssim_index_new(enhanced_image, gx)[0]
+            print(metrics["MS-SSIM"])
 
             oc.addpath("./Visual_Image_Fidelity")
-            metrics["VIF"] += oc.vifvec(gt_image, dehazed_image)
+            metrics["VIF"] += oc.vifvec(gt_image, enhanced_image)
 
-            metrics["FSIM"] += oc.FeatureSIM(gt_image, dehazed_image)
+            metrics["FSIM"] += oc.FeatureSIM(gt_image, enhanced_image)
 
             oc.addpath("./Visible_Edges_Ratio")
-            e1, ns1 = oc.visible_edge_ratio(gt_path, dehazed)
+            e1, ns1 = oc.visible_edge_ratio(gt_path, enhanced)
             metrics["ns1"] += ns1
             metrics["e1"] += e1
 
             oc.addpath("./niqe_release")
-            metrics["NIQE"] += oc.computequality(dehazed_image, 96, 96, 0, 0)
+            metrics["NIQE"] += oc.computequality(enhanced_image, 96, 96, 0, 0)
 
             oc.addpath("./SSEQ")
-            metrics["SSEQ"] += oc.SSEQ(dehazed_image)
+            metrics["SSEQ"] += oc.SSEQ(enhanced_image)
 
         for keys, values in metrics.items():
             metrics[keys] = values / num_images
