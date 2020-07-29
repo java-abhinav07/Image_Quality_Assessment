@@ -5,7 +5,7 @@ from PIL import Image
 
 
 ############# Numpy Implementation ###############
-def entropy_np(img):
+def entropy(img):
     hist = np.histogramdd(np.ravel(img), bins=256)[0] / img.size
     hist = list(filter(lambda p: p > 0, np.ravel(hist)))
 
@@ -13,9 +13,14 @@ def entropy_np(img):
     return entropy
 
 
+def entropy_np(img, dehazed_img):
+    return entropy(img) / entropy(dehazed_img)
+
+
 ##################################################
 
 
-def entropy_sk(img):
-    entropy = skimage.measure.shannon_entropy(img)
-    return entropy
+def entropy_sk(img, dehazed_img):
+    entropy_gt = skimage.measure.shannon_entropy(img)
+    entropy_dehazed = skimage.measure.shannon_entropy(dehazed_img)
+    return entropy_dehazed / entropy_gt

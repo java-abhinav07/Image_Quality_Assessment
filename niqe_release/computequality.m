@@ -1,5 +1,5 @@
 function  quality = computequality(im,blocksizerow,blocksizecol,...
-    blockrowoverlap,blockcoloverlap,mu_prisparam,cov_prisparam)
+    blockrowoverlap,blockcoloverlap)
    
 % Input
 % im              - Image whose quality needs to be computed
@@ -25,6 +25,7 @@ function  quality = computequality(im,blocksizerow,blocksizecol,...
 featnum      = 18;
 %----------------------------------------------------------------
 %Compute features
+load modelparameters.mat;
 if(size(im,3)==3)
 im               = rgb2gray(im);
 end
@@ -88,4 +89,5 @@ cov_distparam    = nancov(distparam);
 invcov_param     = pinv((cov_prisparam+cov_distparam)/2);
 quality = sqrt((mu_prisparam-mu_distparam)* ...
     invcov_param*(mu_prisparam-mu_distparam)');
-
+    
+exit;

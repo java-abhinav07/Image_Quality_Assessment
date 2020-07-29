@@ -133,3 +133,5 @@ end
 
 % compuate VIF
 vif=sum(num)./sum(den);
+
+exit;

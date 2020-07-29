@@ -101,4 +101,4 @@ end
 mssim = mean2(ssim_map);
 mcs = mean2(cs_map);
 
-return
+exit;

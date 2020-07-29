@@ -9,6 +9,7 @@
 % Saint Etienne, France, August 30-September 7, 2007.
 % http://perso.lcpc.fr/tarel.jean-philippe/publis/ics07.html
 %
+function [e1, ns1] = visible_edge_ratio(original, reference)
 
 %%%% Cleaning
 clc
@@ -17,24 +18,24 @@ close all
 
 %%%% Images reading: the input 2 images must be grayscale
 
-NameOri='Original.pgm';
-NameResto='Restored.pgm';
+%NameOri='Original.pgm';
+%NameResto='Restored.pgm';
 %NameResto='Restored2.pgm';
 %NameResto='Restored3.pgm';
 %NameResto='Restored4.pgm';
 %NameResto='Restored5.pgm';
 
-I1=Imread(NameOri);
+I1=Imread(original);
 I1=double(I1);
 % if the input image is a color image, use following line
-% I1=double(rgb2gray(uint8(I1)));
+I1=double(rgb2gray(uint8(I1)));
 
 [nl,nc]=size(I1);
 
-R1=Imread(NameResto);
+R1=Imread(reference);
 R1=double(R1);
 % if the input image is a color image, use following line
-% R1=double(rgb2gray(uint8(R1)));
+R1=double(rgb2gray(uint8(R1)));
 
 %%%% Figure 1
 figure(1)
@@ -87,18 +88,18 @@ minCrri=min(Crri(:));
 maxCrri=max(Crri(:));
 
 %%%% Figure 3
-figure(3)
-colormap gray
-subplot(1,2,1)
-imagesc(Crri,[minCrri  maxCrri]);
-axis image
-title(['Visible edge in the original image']);
-colorbar
-subplot(1,2,2)
-imagesc(Crr1,[minCrri  maxCrri]);
-axis image
-title(['Visible edge in the restored image']);
-colorbar
+// figure(3)
+// colormap gray
+// subplot(1,2,1)
+// imagesc(Crri,[minCrri  maxCrri]);
+// axis image
+// title(['Visible edge in the original image']);
+// colorbar
+// subplot(1,2,2)
+// imagesc(Crr1,[minCrri  maxCrri]);
+// axis image
+// title(['Visible edge in the restored image']);
+// colorbar
 
 %%%% Visible Gradients Ratio
 Cratio1=zeros(nl,nc);
@@ -108,12 +109,12 @@ rmin=1;
 rmax=10;
 
 %%%% Figure 4
-figure(4)
-imagesc(Cratio1,[rmin rmax]);
-axis image
-title(['Visible gradients ratio between ',num2str(rmin), ' and ',num2str(rmax)]); 
-colormap jet
-colorbar
+// figure(4)
+// imagesc(Cratio1,[rmin rmax]);
+// axis image
+// title(['Visible gradients ratio between ',num2str(rmin), ' and ',num2str(rmax)]); 
+// colormap jet
+// colorbar
 
 %%%% Descriptor computation
 
@@ -131,17 +132,18 @@ XX=log(Cratio1);
 r1=exp((1/(whitePixels1))*nansum(XX(isfinite(XX))));
 
 %%%% Figure 5: Final result with the visible edges at 5% and descriptors
-figure(5)
-subplot(1,2,1);
-colormap gray
-imagesc(Ci);
-axis image
-title(['Visible edges in the original image: ',num2str( whitePixelsi), ' edgels'])
-subplot(1,2,2);
-colormap gray
-imagesc(C1);
-axis image
-title(['Visible edges in the restored image: ',num2str( whitePixels1), ' edgels'])
+// figure(5)
+// subplot(1,2,1);
+// colormap gray
+// imagesc(Ci);
+// axis image
+// title(['Visible edges in the original image: ',num2str( whitePixelsi), ' edgels'])
+// subplot(1,2,2);
+// colormap gray
+// imagesc(C1);
+// axis image
+// title(['Visible edges in the restored image: ',num2str( whitePixels1), ' edgels'])
 
-axes('position',[0,0,1,1],'visible','off');
-text(0.3,0.1,['e=',num2str(e1),'    {\sigma}=',num2str(ns1*100),'%','    r=', num2str(r1),' ' ])
+// axes('position',[0,0,1,1],'visible','off');
+// text(0.3,0.1,['e=',num2str(e1),'    {\sigma}=',num2str(ns1*100),'%','    r=', num2str(r1),' ' ])
+exit;
