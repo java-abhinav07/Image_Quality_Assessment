@@ -36,7 +36,8 @@ args = parser.parse_args()
 
 for dir in os.listdir(args.root):
     print(dir)
-    print("----------------------------------------------------------")
+    print("-------------------")
+    print("-------------------")
     for dataset in os.listdir(os.path.join(args.root, dir)):
         print(dir, " -----> ", dataset)
 
@@ -101,11 +102,10 @@ for dir in os.listdir(args.root):
             # oc.addpath("./Multi_Scale_SSIM")
             # metrics["MS-SSIM"] += oc.msssim(enhanced_image, gx)
 
-            # Uncomment
             # metrics["MS-SSIM"] += compute_msssim(
             #     np.array([gt_image]), np.array([enhanced_image]), max_val=255
             # )
-            # print(metrics["MS-SSIM"])
+            # # print(metrics["MS-SSIM"])
 
             # oc.addpath("./Visual_Image_Fidelity")
             # metrics["VIF"] += oc.vifvec(gt_image, enhanced_image)
@@ -140,4 +140,5 @@ for dir in os.listdir(args.root):
             f.write()
 
         print("finished writing {} to file.".format(dir))
-        print("-----------------------------------------------------------------------")
+        print("-----------------")
+        
