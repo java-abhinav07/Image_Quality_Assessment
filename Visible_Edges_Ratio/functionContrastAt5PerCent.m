@@ -1,16 +1,16 @@
 % 23/02/2011
 % IFSTTAR copyright
 %
-% The approach is described in details in 
+% The approach is described in details in
 %
 % "Blind Contrast Restoration Assessment by Gradient Ratioing at Visible Edges",
 % by N. Hautiere, J.-P. Tarel, D. Aubert and E. Dumont,
-% in proceedings of International Congress for Stereology (ICS'07), 
+% in proceedings of International Congress for Stereology (ICS'07),
 % Saint Etienne, France, August 30-September 7, 2007.
 % http://perso.lcpc.fr/tarel.jean-philippe/publis/ics07.html
 %
 function [Mask Crr]=functionContrastAt5PerCent(I1,S,percentage)
-pkg load image statistics optim signal;
+pkg load image statistics;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Inputs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,7 +66,7 @@ Mask=false(nl+2*S,nc+2*S);
 Crr=zeros(nl+2*S,nc+2*S);
 s=1;
 percentage=percentage/2;
-
+disp("here")
 %h = waitbar(0,'Please wait...');
 
 %%% subwindow of size S*S
@@ -157,7 +157,7 @@ for ii=1:round(S/2):nl
 
         if(M>(256*(percentage/100)))
             %%% overlapping : we make a "logical |" because we evaluate contrast in windows of size S moving with a step of S/2
-            
+
             Mask(S+ii:2*S+ii-1,S+jj:2*S+jj-1) =  Mask(S+ii:2*S+ii-1,S+jj:2*S+jj-1) |  Fcube(:,:,s0-Ismin+1);
 
             I3=Mask(S+ii:2*S+ii-1,S+jj:2*S+jj-1);
@@ -170,7 +170,7 @@ for ii=1:round(S/2):nl
             Crr(S+ii:2*S+ii-1,S+jj:2*S+jj-1)=Crr1;
 
         end
-               
+
     end
 
     %waitbar(ii/nl,h)

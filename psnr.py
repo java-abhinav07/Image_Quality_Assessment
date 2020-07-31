@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from math import log
+from math import log10
 
 
 def psnr(img1, img2):
@@ -10,6 +10,6 @@ def psnr(img1, img2):
     if mse == 0:
         return float("inf")
     max_brightness = 255.0
-    psnr = 10 * log((max_brightness ** 2) / mse)
+    psnr = 10 * log10((max_brightness ** 2) / mse)
 
-    return psnr, mse
+    return psnr

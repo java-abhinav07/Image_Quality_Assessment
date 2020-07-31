@@ -3,11 +3,11 @@
 % 23/02/2011
 % IFSTTAR copyright
 %
-% The approach is described in details in 
+% The approach is described in details in
 %
 % "Blind Contrast Restoration Assessment by Gradient Ratioing at Visible Edges",
 % by N. Hautiere, J.-P. Tarel, D. Aubert and E. Dumont,
-% in proceedings of International Congress for Stereology (ICS'07), 
+% in proceedings of International Congress for Stereology (ICS'07),
 % Saint Etienne, France, August 30-September 7, 2007.
 % http://perso.lcpc.fr/tarel.jean-philippe/publis/ics07.html
 %
@@ -72,20 +72,21 @@ maxGI=max(GI(:));
 %colormap gray
 %subplot(1,2,1)
 %imagesc(GI,[minGI maxGI]);
-%title(['Gradients of the original image']); 
+%title(['Gradients of the original image']);
 %axis image
 %colorbar
 %subplot(1,2,2)
 %imagesc(GR1,[minGI maxGI]);
-%title(['Gradients of the restored image']); 
+%title(['Gradients of the restored image']);
 %axis image
 %colorbar
-
 %%%% Contrast Computation at 5%
 tic
 [C1 Crr1]=functionContrastAt5PerCent(R1);
 [Ci Crri]=functionContrastAt5PerCent(I1);
 toc
+disp("done 5 percent")
+
 
 minCrri=min(Crri(:));
 maxCrri=max(Crri(:));
@@ -115,7 +116,7 @@ rmax=10;
 %figure(4)
 %imagesc(Cratio1,[rmin rmax]);
 %axis image
-%title(['Visible gradients ratio between ',num2str(rmin), ' and ',num2str(rmax)]); 
+%title(['Visible gradients ratio between ',num2str(rmin), ' and ',num2str(rmax)]);
 %colormap jet
 %colorbar
 
