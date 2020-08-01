@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import skimage.measure
+from timeout import timeout
 from PIL import Image
 
 
@@ -19,7 +20,7 @@ def entropy_np(img, dehazed_img):
 
 ##################################################
 
-
+@timeout()
 def entropy_sk(img, dehazed_img):
     entropy_gt = skimage.measure.shannon_entropy(img)
     entropy_dehazed = skimage.measure.shannon_entropy(dehazed_img)

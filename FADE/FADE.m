@@ -4,7 +4,7 @@ function [D D_map] = FADE(I_path)
     % Detail explanation:
     % L. K. Choi, J. You, and A. C. Bovik, "Referenceless Prediction of Perceptual Fog Density and Perceptual Image Defogging",
     % IEEE Transactions on Image Processing, to appear (2015).
-     I = imread(I_path);
+    I = imread(I_path);
     %% Basic setup
             ps                      = 8;                                            % patch size 8 x 8 pixels
         % Size of a test image for checking possilbe distinct patches

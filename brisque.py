@@ -1,7 +1,11 @@
 import imquality.brisque as brisque
 from PIL import Image
-
+from timeout import timeout
 ########## Using image-quality library ################
+def get_flag(*args):
+    return args
+
+@timeout(get_flag())
 def brisque_imquality(img):
     return brisque.score(img)
 

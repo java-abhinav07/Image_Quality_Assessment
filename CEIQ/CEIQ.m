@@ -6,8 +6,9 @@
 % This model was trained by all the images in CCID2104 database using
 % LIBSVM.
 %==========================================================================
-
 function [predicted_score] = CEIQ(Img)
+    pkg load image statistics;
+    warning ('off', 'Octave:data-file-in-path');
     load model.mat;
     feat = [];
     gImg = rgb2gray(Img);
@@ -26,6 +27,8 @@ function [predicted_score] = CEIQ(Img)
     f5 = - sum(h2(goodones) .* log2(h1(goodones))); %f5, Eq. (5)
 
     feat = [feat f1 f2 f3 f4 f5];
+    addpath('/home/anil/Desktop/Dehazing_Abhinav/libsvm/matlab');
+
     [predicted_score accuracy decision_values] = svmpredict(1, feat, model);
 
 end

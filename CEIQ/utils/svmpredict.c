@@ -220,10 +220,10 @@ void predict(int nlhs, mxArray *plhs[], const mxArray *prhs[], struct svm_model 
 	if(svm_type==NU_SVR || svm_type==EPSILON_SVR)
 	{
 		info("Mean squared error = %g (regression)\n",error/total);
-		info("Squared correlation coefficient = %g (regression)\n",
-			((total*sumpt-sump*sumt)*(total*sumpt-sump*sumt))/
-			((total*sumpp-sump*sump)*(total*sumtt-sumt*sumt))
-			);
+		// info("Squared correlation coefficient = %g (regression)\n",
+		// 	((total*sumpt-sump*sumt)*(total*sumpt-sump*sumt))/
+		// 	((total*sumpp-sump*sump)*(total*sumtt-sumt*sumt))
+		// 	);
 	}
 	else
 		info("Accuracy = %g%% (%d/%d) (classification)\n",

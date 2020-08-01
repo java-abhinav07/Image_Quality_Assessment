@@ -85,7 +85,7 @@ tic
 [C1 Crr1]=functionContrastAt5PerCent(R1);
 [Ci Crri]=functionContrastAt5PerCent(I1);
 toc
-disp("done 5 percent")
+
 
 
 minCrri=min(Crri(:));
