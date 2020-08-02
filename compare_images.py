@@ -36,33 +36,44 @@ for dir in os.listdir(os.path.join(args.root, "Results")):
         print(str(_) + ". " + str(dataset))
 
         metrics = {
-            "PSNR": 0,
-            "SSIM": 0,
-            "FSIM": 0,
-            "BLINDS": 0,
-            "BRISQUE": 0,
-            "MS-SSIM": 0,
-            "IE": 0,
-            "e1": 0,
-            "ns1": 0,
-            "NIQE": 0,
-            "SSEQ": 0,
-            "VIF": 0,
-            "MSE": 0,
-            "UQI": 0,
-            "RASE": 0,
-            "CEIQ": 0,
-            "ESSIM": 0,
-            "FADE": 0,
-            "GMSD": 0,
+            "PSNR": [0, 0],
+            "SSIM": [0, 0],
+            "FSIM": [0, 0],
+            "BLINDS": [0, 0],
+            "BRISQUE": [0, 0],
+            "MS-SSIM": [0, 0],
+            "IE": [0, 0],
+            "e1": [0, 0],
+            "ns1": [0, 0],
+            "NIQE": [0, 0],
+            "SSEQ": [0, 0],
+            "VIF": [0, 0],
+            "MSE": [0, 0],
+            "UQI": [0, 0],
+            "RASE": [0, 0],
+            "CEIQ": [0, 0],
+            "ESSIM": [0, 0],
+            "FADE": [0, 0],
+            "GMSD": [0, 0],
         }
-        images_list = os.listdir(os.path.join(args.root, "Results", dir, dataset))
+        # images_list = os.listdir(os.path.join(args.root, "Results", dir, dataset))
         try:
             extension = os.listdir(os.path.join(args.root, "GT", dataset))[0].split(".")[-1]
         except:
             extension = "None"
-        num_images = len(images_list)
-        for enhanced in tqdm(images_list):
+        # num_images = len(images_list)
+        oc1 = oct2py.Oct2Py(temp_dir="./tmp1/")
+        oc1.addpath("./FSIM/")
+        oc2 = oct2py.Oct2Py(temp_dir="./tmp2/")
+        oc2.addpath("./ESSIM/")
+        oc3 = oct2py.Oct2Py(temp_dir="./tmp3/")
+        oc3.addpath("./GMSD/")
+        oc4 = oct2py.Oct2Py(temp_dir="./tmp4/")
+        oc4.addpath("./CEIQ/")
+        oc5 = oct2py.Oct2Py(temp_dir="./tmp5/")
+        oc5.addpath("./FADE/")
+
+        for enhanced in tqdm(os.listdir(os.path.join(args.root, "Results", dir, dataset))):
 
             gt_path = os.path.join(
                 args.root, "GT", dataset, enhanced.split("_")[0] + "." + extension,
@@ -78,36 +89,22 @@ for dir in os.listdir(os.path.join(args.root, "Results")):
             enhanced_image = Image.open(enhanced).convert("RGB")
 
             if os.path.isfile(gt_path):
-                h, w = enhanced_image.size
-                hg, wg = gt_image.size
+                w, h = enhanced_image.size
+                wg, hg = gt_image.size
+                desired_ratio = wg/hg
                 gx = gt_image
-                # print(w, h)
                 # print(wg, hg)
-                if wg > w:
-                    gt_image = gt_image.resize((hg, w), Image.ANTIALIAS)
+                if wg > 640:
+                    wpercent = (640/gt_image.size[0])
+                    hsize = int((float(gt_image.size[1])*float(wpercent)))
+                    gt_image = gt_image.resize((640, hsize), Image.ANTIALIAS)
+                    enhanced_image = enhanced_image.resize(gt_image.size, Image.ANTIALIAS)
+                else:
+                    enhanced_image = enhanced_image.resize(gt_image.size, Image.ANTIALIAS)
 
-                h, w = enhanced_image.size
-                hg, wg = gt_image.size
-                if hg > h:
-                    gt_image = gt_image.resize((h, wg), Image.ANTIALIAS)
-                h, w = enhanced_image.size
-                hg, wg = gt_image.size
-                if w > wg:
-                    enhanced_image = enhanced_image.resize((h, wg), Image.ANTIALIAS)
-                h, w = enhanced_image.size
-                hg, wg = gt_image.size
-                if h > hg:
-                    enhanced_image = enhanced_image.resize((hg, w), Image.ANTIALIAS)
 
-                h, w = enhanced_image.size
-                hg, wg = gt_image.size
-
-                assert(h==hg)
-                assert(wg==w)
-
-                if h*w > 250000:
-                    gt_image = gt_image.resize((480, 640), Image.ANTIALIAS)
-                    enhanced_image = enhanced_image.resize((480, 640), Image.ANTIALIAS)
+                assert(enhanced_image.size==gt_image.size)
+                # print(enhanced_image.size)
 
                 # gt_image.show()
                 # enhanced_image.show()
@@ -122,45 +119,52 @@ for dir in os.listdir(os.path.join(args.root, "Results")):
             enhanced_gray = ImageOps.grayscale(enhanced_image)
             enhanced_image = np.asanyarray(enhanced_image)
             enhanced_gray = np.asanyarray(enhanced_gray)
-            oc = oct2py.Oct2Py(temp_dir="./tmp/")
 
             # FR_IQA
             if os.path.isfile(gt_path):
 
                 ssim, mse = ssim_sk(gt_image, enhanced_image)
-                metrics["SSIM"] += ssim
+                metrics["SSIM"][0] += ssim
+                metrics["SSIM"][1] += 1
 
                 psnr_val = psnr(gt_image, enhanced_image)
-                metrics["PSNR"] += psnr_val
+                metrics["PSNR"][0] += psnr_val
+                metrics["PSNR"][1] += 1
 
-                metrics["MSE"] += mse
+                metrics["MSE"][0] += mse
+                metrics["MSE"][1] += 1
                 try:
-                    metrics["IE"] += entropy_sk(gt_image, enhanced_image)
+                    metrics["IE"][0] += entropy_sk(gt_image, enhanced_image)
+                    metrics["IE"][1] += 1
                 except:
                     pass
 
                 try:
-                    metrics["VIF"] += compute_vif(gt_image, enhanced_image)
+                    metrics["VIF"][0] += compute_vif(gt_image, enhanced_image)
+                    metrics["VIF"][1] += 1
                 except:
                     pass
 
-                metrics["MS-SSIM"] += compute_msssim(
+                metrics["MS-SSIM"][0] += compute_msssim(
                     np.array([gt_image]), np.array([enhanced_image]), max_val=255
                 )
+                metrics["MS-SSIM"][1] += 1
 
                 try:
-                    metrics["UQI"] += compute_uqi(gt_image, enhanced_image)
+                    metrics["UQI"][0] += compute_uqi(gt_image, enhanced_image)
+                    metrics["UQI"][1] += 1
                 except:
                     pass
 
+
                 try:
-                    oc.addpath("./FSIM")
-                    fsim = func_timeout(7, oc.FeatureSIM, args=(gt_image, enhanced_image))
-                    metrics["FSIM"] += fsim
+                    fsim = func_timeout(10, oc1.FeatureSIM, args=(gt_image, enhanced_image))
+                    metrics["FSIM"][0] += fsim
+                    metrics["FSIM"][1] += 1
                 except FunctionTimedOut:
                     pass
                 except Exception as e:
-                    raise(e)
+                    pass
 
 
                 # oc.addpath("./Visible_Edges_Ratio")
@@ -168,39 +172,39 @@ for dir in os.listdir(os.path.join(args.root, "Results")):
                 # metrics["ns1"] += ns1
                 # metrics["e1"] += e1
                 # print("ver")
-
                 try:
-                    oc.addpath("./ESSIM")
-                    essim = func_timeout(7, oc.ESSIM, args=(gt_image, enhanced_image))
-                    metrics["ESSIM"] += essim
+                    essim = func_timeout(7, oc2.ESSIM, args=(gt_image, enhanced_image))
+                    metrics["ESSIM"][0] += essim
+                    metrics["ESSIM"][1] += 1
                 except FunctionTimedOut:
                     pass
                 except Exception as e:
-                    raise(e)
+                    pass
 
                 try:
-                    oc.addpath("./GMSD")
-                    gmsd = func_timeout(7, oc.GMSD, args=(gt_gray, enhanced_gray))
-                    metrics["GMSD"] += gmsd
+                    gmsd = func_timeout(7, oc3.GMSD, args=(gt_gray, enhanced_gray))
+                    metrics["GMSD"][0] += gmsd
+                    metrics["GMSD"][1] += 1
                 except FunctionTimedOut:
                     pass
                 except Exception as e:
-                    raise(e)
+                    pass
 
 
 
             # NR-IQA
-            if not os.path.isfile(gt_path):
-                t = 15
-            else:
-                t = 1
+            t = 7
+            #
+            # get_flag(t)
 
-            get_flag(t)
+            metrics["BRISQUE"][0] += brisque_imquality(enhanced_image)
+            metrics["BRISQUE"][1] += 1
 
-            try:
-                metrics["BRISQUE"] += brisque_imquality(enhanced_image)
-            except:
-                pass
+            # try:
+            #     metrics["BRISQUE"][0] += brisque_imquality(enhanced_image)
+            #     metrics["BRISQUE"][1] += 1
+            # except:
+            #     pass
             # print("brisque: ", metrics["BRISQUE"])
 
             # oc.addpath("./Bliinds2_code")
@@ -211,37 +215,50 @@ for dir in os.listdir(os.path.join(args.root, "Results")):
             # oc.addpath("./niqe_release")
             # metrics["NIQE"] += oc.computequality(enhanced_image, 96, 96, 0, 0)
             # print("niqe: ", metrics["NIQE"])
-            try:
-                oc.addpath("./SSEQ")
-                sseq = func_timeout(t, oc.SSEQ, args=(enhanced_image, ))
-                metrics["SSEQ"] += sseq
-            except FunctionTimedOut:
-                pass
-            except Exception as e:
-                raise(e)
+
 
             # print("sseq: ", metrics["SSEQ"])
-            oc.addpath("./CEIQ")
-            metrics["CEIQ"] += oc.CEIQ(enhanced_image)
 
-            # print("ceiq: ", metrics["CEIQ"])
+            # oc.addpath("./CEIQ")
+            # metrics["CEIQ"] += oc4.CEIQ(enhanced_image)
+            if not os.path.isfile(gt_path):
+                try:
+                    ceiq = func_timeout(t, oc4.CEIQ, args=(enhanced_image, ))
+                    metrics["CEIQ"][0] += ceiq
+                    metrics["CEIQ"][1] += 1
+                except FunctionTimedOut:
+                    pass
+                except Exception as e:
+                    pass
 
-            # t = time()
-            try:
-                oc.addpath("./FADE")
-                density = func_timeout(t, oc.FADE, args=(enhanced,))
-                metrics["FADE"] += density
-            except FunctionTimedOut:
-                pass
-            except Exception as e:
-                raise(e)
+                # print("ceiq: ", metrics["CEIQ"])
+
+                # t = time()
+                try:
+                    density = func_timeout(t, oc5.FADE, args=(enhanced,))
+                    metrics["FADE"][0] += density
+                    metrics["FADE"][1] += 1
+                except FunctionTimedOut:
+                    pass
+                except Exception as e:
+                    pass
+
+            # oc.addpath("./SSEQ")
+            # try:
+            #     sseq = func_timeout(t, oc.SSEQ, args=(enhanced_image, ))
+            #     metrics["SSEQ"] += sseq
+            # except FunctionTimedOut:
+            #     pass
+            # except Exception as e:
+            #     raise(e)
 
             # print(time()-t)
             # print("fade: ", metrics["FADE"])
 
         for keys, values in metrics.items():
-            metrics[keys] = values / num_images
-            print(keys, metrics[keys])
+            if values[1] > 0:
+                metrics[keys][0] = values[0] / values[1]
+                print(keys, metrics[keys][0])
 
         with open("{}_metrics.txt".format(dir), "a") as f:
             f.write(dataset)
