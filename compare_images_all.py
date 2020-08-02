@@ -19,6 +19,8 @@ from msssim import compute_msssim
 from vif import *
 from time import time
 
+import csv
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -35,27 +37,6 @@ for dir in os.listdir(os.path.join(args.root, "Results")):
     for _, dataset in enumerate(os.listdir(os.path.join(args.root, "Results", dir))):
         print(str(_) + ". " + str(dataset))
 
-        metrics = {
-            "PSNR": [0, 0],
-            "SSIM": [0, 0],
-            "FSIM": [0, 0],
-            "BLINDS": [0, 0],
-            "BRISQUE": [0, 0],
-            "MS-SSIM": [0, 0],
-            "IE": [0, 0],
-            "e1": [0, 0],
-            "ns1": [0, 0],
-            "NIQE": [0, 0],
-            "SSEQ": [0, 0],
-            "VIF": [0, 0],
-            "MSE": [0, 0],
-            "UQI": [0, 0],
-            "RASE": [0, 0],
-            "CEIQ": [0, 0],
-            "ESSIM": [0, 0],
-            "FADE": [0, 0],
-            "GMSD": [0, 0],
-        }
         # images_list = os.listdir(os.path.join(args.root, "Results", dir, dataset))
         try:
             extension = os.listdir(os.path.join(args.root, "GT", dataset))[0].split(
@@ -130,48 +111,36 @@ for dir in os.listdir(os.path.join(args.root, "Results")):
             if os.path.isfile(gt_path):
 
                 ssim, mse = ssim_sk(gt_image, enhanced_image)
-                metrics["SSIM"][0] += ssim
-                metrics["SSIM"][1] += 1
 
                 psnr_val = psnr(gt_image, enhanced_image)
-                metrics["PSNR"][0] += psnr_val
-                metrics["PSNR"][1] += 1
-
-                metrics["MSE"][0] += mse
-                metrics["MSE"][1] += 1
-                try:
-                    metrics["IE"][0] += entropy_sk(gt_image, enhanced_image)
-                    metrics["IE"][1] += 1
-                except:
-                    pass
 
                 try:
-                    metrics["VIF"][0] += compute_vif(gt_image, enhanced_image)
-                    metrics["VIF"][1] += 1
+                    ie = entropy_sk(gt_image, enhanced_image)
                 except:
-                    pass
+                    ie = "null"
 
-                metrics["MS-SSIM"][0] += compute_msssim(
+                try:
+                    vif = compute_vif(gt_image, enhanced_image)
+                except:
+                    vif = "null"
+
+                ms_ssim = compute_msssim(
                     np.array([gt_image]), np.array([enhanced_image]), max_val=255
                 )
-                metrics["MS-SSIM"][1] += 1
 
                 try:
-                    metrics["UQI"][0] += compute_uqi(gt_image, enhanced_image)
-                    metrics["UQI"][1] += 1
+                    uqi = compute_uqi(gt_image, enhanced_image)
                 except:
-                    pass
+                    uqi = "null"
 
                 try:
                     fsim = func_timeout(
                         10, oc1.FeatureSIM, args=(gt_image, enhanced_image)
                     )
-                    metrics["FSIM"][0] += fsim
-                    metrics["FSIM"][1] += 1
                 except FunctionTimedOut:
-                    pass
+                    fsim = "null"
                 except Exception as e:
-                    pass
+                    fsim = "null"
 
                 # oc.addpath("./Visible_Edges_Ratio")
                 # e1, ns1 = oc.EvaluationDescriptorCalculation(gt_path, enhanced)
@@ -180,36 +149,24 @@ for dir in os.listdir(os.path.join(args.root, "Results")):
                 # print("ver")
                 try:
                     essim = func_timeout(7, oc2.ESSIM, args=(gt_image, enhanced_image))
-                    metrics["ESSIM"][0] += essim
-                    metrics["ESSIM"][1] += 1
                 except FunctionTimedOut:
-                    pass
+                    essim = "null"
                 except Exception as e:
-                    pass
+                    essim = "null"
 
                 try:
                     gmsd = func_timeout(7, oc3.GMSD, args=(gt_gray, enhanced_gray))
-                    metrics["GMSD"][0] += gmsd
-                    metrics["GMSD"][1] += 1
                 except FunctionTimedOut:
-                    pass
+                    gmsd = "null"
                 except Exception as e:
-                    pass
+                    gmsd = "null"
 
             # NR-IQA
             t = 7
             #
             # get_flag(t)
 
-            metrics["BRISQUE"][0] += brisque_imquality(enhanced_image)
-            metrics["BRISQUE"][1] += 1
-
-            # try:
-            #     metrics["BRISQUE"][0] += brisque_imquality(enhanced_image)
-            #     metrics["BRISQUE"][1] += 1
-            # except:
-            #     pass
-            # print("brisque: ", metrics["BRISQUE"])
+            bris += brisque_imquality(enhanced_image)
 
             # oc.addpath("./Bliinds2_code")
             # bliinds_features = oc.bliinds2_feature_extraction(enhanced_image)
@@ -220,31 +177,23 @@ for dir in os.listdir(os.path.join(args.root, "Results")):
             # metrics["NIQE"] += oc.computequality(enhanced_image, 96, 96, 0, 0)
             # print("niqe: ", metrics["NIQE"])
 
-            # print("sseq: ", metrics["SSEQ"])
-
-            # oc.addpath("./CEIQ")
-            # metrics["CEIQ"] += oc4.CEIQ(enhanced_image)
             if not os.path.isfile(gt_path):
                 try:
                     ceiq = func_timeout(t, oc4.CEIQ, args=(enhanced_image,))
-                    metrics["CEIQ"][0] += ceiq
-                    metrics["CEIQ"][1] += 1
                 except FunctionTimedOut:
-                    pass
+                    ceiq = "null"
                 except Exception as e:
-                    pass
+                    ceiq = "null"
 
                 # print("ceiq: ", metrics["CEIQ"])
 
                 # t = time()
                 try:
-                    density = func_timeout(t, oc5.FADE, args=(enhanced,))
-                    metrics["FADE"][0] += density
-                    metrics["FADE"][1] += 1
+                    fade = func_timeout(t, oc5.FADE, args=(enhanced,))
                 except FunctionTimedOut:
-                    pass
+                    fade = "null"
                 except Exception as e:
-                    pass
+                    fade = "null"
 
             # oc.addpath("./SSEQ")
             # try:
@@ -258,15 +207,46 @@ for dir in os.listdir(os.path.join(args.root, "Results")):
             # print(time()-t)
             # print("fade: ", metrics["FADE"])
 
-        for keys, values in metrics.items():
-            if values[1] > 0:
-                metrics[keys][0] = values[0] / values[1]
-                print(keys, metrics[keys][0])
+            # one csv for each technique
+            fields = [
+                "Name",
+                "SSIM",
+                "PSNR",
+                "MSE",
+                "MS-SSIM",
+                "UQI",
+                "FSIM",
+                "GMSD",
+                "ESSIM",
+                "VIF",
+                "IE",
+                "BRISQUE",
+                "FADE",
+                "CEIQ",
+            ]
 
-        with open("{}_metrics.txt".format(dir), "a") as f:
-            f.write(dataset)
-            f.write(json.dumps(metrics))
-            f.write("\n")
+            rows = [
+                enhanced + "_{}".format(dataset),
+                ssim,
+                psnr_val,
+                mse,
+                ms_ssim,
+                uqi,
+                fsim,
+                gmsd,
+                essim,
+                vif,
+                ie,
+                bris,
+                fade,
+                ceiq,
+            ]
+
+            with open("{}_metrics.txt".format(dir), "a") as f:
+                csvwriter = csv.writer(f)
+                if _ == 0:
+                    csvwriter.writerow(fields)
+                csvwriter.writerows(rows)
 
     print("finished writing {} to file.".format(dir))
     print("-----------------")

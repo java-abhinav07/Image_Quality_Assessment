@@ -3,8 +3,10 @@ import errno
 import os
 import signal
 
+
 class TimeoutError(Exception):
     pass
+
 
 def timeout(seconds=7, error_message=os.strerror(errno.ETIME)):
     def decorator(func):
