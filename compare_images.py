@@ -59,7 +59,9 @@ for dir in os.listdir(os.path.join(args.root, "Results")):
         }
         # images_list = os.listdir(os.path.join(args.root, "Results", dir, dataset))
         try:
-            extension = os.listdir(os.path.join(args.root, "GT", dataset))[0].split(".")[-1]
+            extension = os.listdir(os.path.join(args.root, "GT", dataset))[0].split(
+                "."
+            )[-1]
         except:
             extension = "None"
         # num_images = len(images_list)
@@ -74,7 +76,9 @@ for dir in os.listdir(os.path.join(args.root, "Results")):
         oc5 = oct2py.Oct2Py(temp_dir="./tmp5/")
         oc5.addpath("./FADE/")
 
-        for enhanced in tqdm(os.listdir(os.path.join(args.root, "Results", dir, dataset))):
+        for enhanced in tqdm(
+            os.listdir(os.path.join(args.root, "Results", dir, dataset))
+        ):
 
             gt_path = os.path.join(
                 args.root, "GT", dataset, enhanced.split("_")[0] + "." + extension,

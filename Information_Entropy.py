@@ -20,6 +20,7 @@ def entropy_np(img, dehazed_img):
 
 ##################################################
 
+
 @timeout()
 def entropy_sk(img, dehazed_img):
     entropy_gt = skimage.measure.shannon_entropy(img)
