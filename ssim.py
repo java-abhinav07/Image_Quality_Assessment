@@ -37,7 +37,7 @@ def compare(img1, img2, C1=6.5025, C2=58.5225):
     img2 = img2.astype(np.float64)
 
     gk = cv2.getGaussianKernel(11, 1.5)
-    win = np.outer(kernel, kernel.transpose())
+    win = np.outer(gk, gk.transpose())
 
     u1 = cv2.filter2D(img1, -1, win)[5:-5, 5:-5]
     u2 = cv2.filter2D(img2, -1, win)[5:-5, 5:-5]
